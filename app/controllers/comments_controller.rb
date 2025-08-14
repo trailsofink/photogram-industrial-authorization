@@ -1,5 +1,6 @@
 class CommentsController < ApplicationController
   before_action :set_comment, only: %i[ show edit update destroy ]
+  before_action :is_author, only: %i[ edit update destroy ]
 
   # GET /comments or /comments.json
   def index
@@ -66,5 +67,11 @@ class CommentsController < ApplicationController
     # Only allow a list of trusted parameters through.
     def comment_params
       params.require(:comment).permit(:author_id, :photo_id, :body)
+    end
+
+    def is_author
+      unless @comment.author == current_user
+        redirect_back fallback_location: root_url, alert: "You're not authorized for that"
+      end
     end
 end

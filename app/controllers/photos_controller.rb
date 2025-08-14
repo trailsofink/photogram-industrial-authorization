@@ -1,5 +1,6 @@
 class PhotosController < ApplicationController
   before_action :set_photo, only: %i[ show edit update destroy ]
+  before_action :is_owner, only: %i[ edit update destroy ]
 
   # GET /photos or /photos.json
   def index
@@ -66,5 +67,11 @@ class PhotosController < ApplicationController
     # Only allow a list of trusted parameters through.
     def photo_params
       params.require(:photo).permit(:image, :comments_count, :likes_count, :caption, :owner_id)
+    end
+
+    def is_owner
+      unless current_user == @photo.owner
+        redirect_back fallback_location: root_url, alert: "You're not authorized for that"
+      end
     end
 end
