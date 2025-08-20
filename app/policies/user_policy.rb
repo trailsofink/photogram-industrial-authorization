@@ -8,6 +8,10 @@ class UserPolicy < ApplicationPolicy
     @user = user
   end
 
+  def show?
+    show_photos?
+  end
+
   def show_photos?
     user == current_user ||
       !user.private? ||
